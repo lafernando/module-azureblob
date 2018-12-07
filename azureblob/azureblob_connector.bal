@@ -31,12 +31,12 @@ public type Client client object {
     }
 
     # Lists all the blob containers in the current account.
-    # + return - If successful, returns xml, else returns an `error` value
+    # + return - If successful, returns `ListBlobContainersResult`, else returns an `error` value
     public remote function listBlobContainers() returns ListBlobContainersResult|error;
 
     # Lists the blobs in given specific container.
     # + container - The blob container
-    # + return - If successful, returns xml, else returns an `error` value    
+    # + return - If successful, returns `ListBlobResult`, else returns an `error` value
     public remote function listBlobs(string container) returns ListBlobResult|error;
 
     # Creates a container.
