@@ -1,13 +1,13 @@
 Connects to Azure Blob service through Ballerina.
 
-## Module Overview
+# Module Overview
 
 ## Compatibility
 | Ballerina Language Version 
 | -------------------------- 
 | 0.990.0                    
 
-##### Sample
+## Sample
 
 ```ballerina
 import ballerina/config;
