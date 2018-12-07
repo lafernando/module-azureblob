@@ -32,17 +32,17 @@ public type Client client object {
 
     # Lists all the blob containers in the current account.
     # + return - If successful, returns xml, else returns an `error` value
-    remote function listBlobContainers() returns xml|error;
+    public remote function listBlobContainers() returns xml|error;
 
     # Lists the blobs in given specific container.
     # + container - The blob container
     # + return - If successful, returns xml, else returns an `error` value    
-    remote function listBlobs(string container) returns xml|error;
+    public remote function listBlobs(string container) returns xml|error;
 
     # Creates a container.
     # + container - The blob container
     # + return - If successful, returns `()`, else returns an `error` object
-    remote function createContainer(string container) returns error?;
+    public remote function createContainer(string container) returns error?;
 
     # Puts a blob to a given container.
     # + container - The blob container
@@ -52,7 +52,7 @@ public type Client client object {
     # + contentType - The content type of the blob data
     # + contentEncoding - The content encoding of the blob data
     # + return - If successful, returns `()`, else returns an `error` object   
-    remote function putBlob(string container, string name, byte[] data, BlobType blobType = "BLOCK",
+    public remote function putBlob(string container, string name, byte[] data, BlobType blobType = "BLOCK",
                             string contentType = "application/octet-stream", 
                             string contentEncoding = "") returns error?;
 
@@ -63,19 +63,19 @@ public type Client client object {
     # + endRange - The end limit index of the blob data to be retrieved
     # + streaming - If true, BlobResult.data will be a streaming `ReadableByteChannel` or else, it will be a `byte[]`
     # + return - If successful, returns a `BlobResult` object, else returns an `error` object   
-    remote function getBlob(string container, string name, int startRange = 0, int endRange = 0, 
+    public remote function getBlob(string container, string name, int startRange = 0, int endRange = 0, 
                             boolean streaming = false) returns BlobResult|error;
 
     # Deletes a blob entry.
     # + container - The blob container
     # + name - The name of the blob entry
     # + return - If successful, returns `()`, else returns an `error` object
-    remote function deleteBlob(string container, string name) returns error?;
+    public remote function deleteBlob(string container, string name) returns error?;
 
     # Deletes a container.
     # + container - The blob container
     # + return - If successful, returns `()`, else returns an `error` object
-    remote function deleteContainer(string container) returns error?;
+    public remote function deleteContainer(string container) returns error?;
 
 };
 

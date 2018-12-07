@@ -14,14 +14,14 @@ import ballerina/config;
 import ballerina/io;
 import wso2/azureblob;
 
-Configuration config = {
+azureblob:Configuration config = {
     accessKey: config:getAsString("ACCESS_KEY"),
     account: config:getAsString("ACCOUNT")
 };
 
-Client blobClient = new(config);
+azureblob:Client blobClient = new(config);
 
-function main(string... args) {
+public function main(string... args) {
     _ = blobClient->createContainer("ctnx1");
     _ = blobClient->putBlob("ctnx1", "blob1", [1, 2, 3, 4, 5]);
     var result = blobClient->getBlob("ctnx1", "blob1");
