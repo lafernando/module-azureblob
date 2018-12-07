@@ -19,14 +19,14 @@
 import ballerina/crypto;
 import ballerina/time;
 
-public function generateCommonHeaders() returns map<string> {
+function generateCommonHeaders() returns map<string> {
     string apiVersion = "2017-07-29";
     string dateString = generateAzureStorageDateString();
     map<string> headers = { "x-ms-date": dateString, "x-ms-version": apiVersion };
     return headers;
 }
 
-public function generateCanonicalizedHeadersString(map<string> headers) returns string {
+function generateCanonicalizedHeadersString(map<string> headers) returns string {
     // sort headers
     string result = "";
     foreach var (key, value) in headers {
@@ -37,7 +37,7 @@ public function generateCanonicalizedHeadersString(map<string> headers) returns 
     return result;
 }
 
-public function generateAzureStorageDateString() returns string {
+function generateAzureStorageDateString() returns string {
     string DATE_TIME_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     time:Time time = time:currentTime();
     time:Timezone zoneValue = { zoneId: "GMT" };
@@ -45,25 +45,25 @@ public function generateAzureStorageDateString() returns string {
     return standardTime.format(DATE_TIME_FORMAT);
 }
 
-public function generateError(http:Response resp) returns error {
+function generateError(http:Response resp) returns error {
     xml errorXml = check resp.getXmlPayload();
     error err = error(errorXml.Code.getTextValue(), { message: errorXml.Message.getTextValue() });
     return err;
 }
 
-public function populateAuthorizationHeader(string account, string accessKey, string canonicalizedResource, 
+function populateAuthorizationHeader(string account, string accessKey, string canonicalizedResource, 
                                             string verb, map<string> headers) {
     string signature = generateAzureStorageServiceSignature(accessKey, canonicalizedResource, verb, headers);
     headers["Authorization"] = "SharedKeyLite " + account + ":" + signature;
 }
 
-public function populateRequestHeaders(http:Request req, map<string> headers) {
+function populateRequestHeaders(http:Request req, map<string> headers) {
     foreach var (k, v) in headers {
         req.setHeader(k, v);
     }
 }
 
-public function generatePutBlobHeaders(BlobType blobType) returns map<string> {
+function generatePutBlobHeaders(BlobType blobType) returns map<string> {
     map<string> headers = { };
     if (blobType == BLOCK_BLOB) {
         headers["x-ms-blob-type"] = "BlockBlob";
@@ -78,7 +78,7 @@ public function generatePutBlobHeaders(BlobType blobType) returns map<string> {
     return headers;
 }
 
-public function generateAzureStorageServiceSignature(string accessKey, string canonicalizedResource, 
+function generateAzureStorageServiceSignature(string accessKey, string canonicalizedResource, 
                                                      string verb, map<string> headers) returns string {
     string canonicalizedHeaders = generateCanonicalizedHeadersString(headers);
     string? value = headers["Content-Type"];
