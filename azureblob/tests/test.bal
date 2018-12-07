@@ -16,7 +16,6 @@
 
 import ballerina/config;
 import ballerina/test;
-import ballerina/io;
 
 Configuration config = {
     accessKey: config:getAsString("ACCESS_KEY"),
@@ -41,6 +40,8 @@ function testListContainers() {
     var result = blobClient->listBlobContainers();
     if (result is error) {
         test:assertFail(msg = <string> result.detail().message);
+    } else {
+        test:assertTrue(result.containers.length() > 0);
     }
 }
 
@@ -98,6 +99,8 @@ function testListBlobs() {
     var result = blobClient->listBlobs("ctnx1");
     if (result is error) {
         test:assertFail(msg = <string> result.detail().message);
+    } else {
+        test:assertTrue(result.blobs[0].name == "blob1");
     }
     return ();
 }

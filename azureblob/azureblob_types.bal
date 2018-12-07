@@ -18,8 +18,8 @@
 
 import ballerina/io;
 
-public type BlobResult record {
-    byte[]|io:ReadableByteChannel data;
+public type BlobInfo record {
+    string name;
     int contentLength;
     BlobType blobType;
     string lastModified?;
@@ -30,4 +30,19 @@ public type BlobResult record {
     string contentEncoding?;
 };
 
+public type BlobContainerInfo record {
+    string name;
+};
 
+public type BlobResult record {
+    byte[]|io:ReadableByteChannel data;
+    BlobInfo blobInfo;
+};
+
+public type ListBlobResult record {
+    BlobInfo[] blobs;
+};
+
+public type ListBlobContainersResult record {
+    BlobContainerInfo[] containers;
+};

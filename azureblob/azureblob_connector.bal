@@ -32,12 +32,12 @@ public type Client client object {
 
     # Lists all the blob containers in the current account.
     # + return - If successful, returns xml, else returns an `error` value
-    public remote function listBlobContainers() returns xml|error;
+    public remote function listBlobContainers() returns ListBlobContainersResult|error;
 
     # Lists the blobs in given specific container.
     # + container - The blob container
     # + return - If successful, returns xml, else returns an `error` value    
-    public remote function listBlobs(string container) returns xml|error;
+    public remote function listBlobs(string container) returns ListBlobResult|error;
 
     # Creates a container.
     # + container - The blob container
@@ -79,7 +79,7 @@ public type Client client object {
 
 };
 
-remote function Client.listBlobContainers() returns xml|error {
+remote function Client.listBlobContainers() returns ListBlobContainersResult|error {
         http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
     string verb = "GET";
     map<string> headers = generateCommonHeaders();
@@ -96,13 +96,13 @@ remote function Client.listBlobContainers() returns xml|error {
         if (statusCode != http:OK_200) {
             return generateError(resp);
         }
-        return resp.getXmlPayload();
+        return decodeListBlobContainerXML(check resp.getXmlPayload());
     } else {
         return resp;
     }
 }
 
-remote function Client.listBlobs(string container) returns xml|error {
+remote function Client.listBlobs(string container) returns ListBlobResult|error {
     http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
     string verb = "GET";
     map<string> headers = generateCommonHeaders();
@@ -120,7 +120,7 @@ remote function Client.listBlobs(string container) returns xml|error {
         if (statusCode != http:OK_200) {
             return generateError(resp);
         }
-        return resp.getXmlPayload();
+        return check decodeListBlobXML(check resp.getXmlPayload());
     } else {
         return resp;
     }
@@ -230,8 +230,8 @@ remote function Client.getBlob(string container, string name, int startRange = 0
             return generateError(resp);
         }
         string cls = resp.getHeader("Content-Length");
-        return { data: streaming ? check resp.getByteChannel() : check resp.getBinaryPayload(), 
-                 contentLength: check int.convert(cls), blobType: BLOCK_BLOB };
+        BlobInfo blobInfo = { name: name, contentLength: check int.convert(cls), blobType: BLOCK_BLOB };
+        return { data: streaming ? check resp.getByteChannel() : check resp.getBinaryPayload(), blobInfo: blobInfo };
     } else {
         return resp;
     }    

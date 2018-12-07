@@ -18,6 +18,7 @@
 
 import ballerina/crypto;
 import ballerina/time;
+import ballerina/io;
 
 function generateCommonHeaders() returns map<string> {
     string apiVersion = "2017-07-29";
@@ -104,5 +105,43 @@ function generateAzureStorageServiceSignature(string accessKey, string canonical
                           canonicalizedResource;
     return crypto:hmac(stringToSign, accessKey, keyEncoding = crypto:BASE64, crypto:SHA256).base16ToBase64Encode();
 }
+
+function decodeListBlobXML(xml payload) returns ListBlobResult|error {
+    BlobInfo[] blobs = [];
+    int index = 0;
+    foreach var item in payload.Blobs.Blob {
+        if (item is xml) {
+            int contentLength = check int.convert(item.Properties["Content-Length"].getTextValue());
+            BlobType blobType = BLOCK_BLOB;
+            string blobTypeString = item.Properties.BlobType.getTextValue();
+            if (blobTypeString == "PageBlob") {
+                blobType = PAGE_BLOB;
+            } else if (blobTypeString == "AppendBlob") {
+                blobType = APPEND_BLOB;
+            }
+            BlobInfo blob = { name: item.Name.getTextValue(), contentLength: contentLength, blobType: blobType };
+            blobs[index] = blob;
+            index = index + 1;
+        }
+    }
+    ListBlobResult result = { blobs: blobs };
+    return result;
+}
+
+function decodeListBlobContainerXML(xml payload) returns ListBlobContainersResult {
+    BlobContainerInfo[] containers = [];
+    int index = 0;
+    foreach var item in payload.Containers.Container {
+        if (item is xml) {
+            BlobContainerInfo container = { name: item.Name.getTextValue() };
+            containers[index] = container;
+            index = index + 1;
+        }
+    }
+    ListBlobContainersResult result = { containers: containers };
+    return result;
+}
+
+
 
 
