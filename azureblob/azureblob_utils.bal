@@ -21,7 +21,7 @@ import ballerina/time;
 import ballerina/io;
 
 function generateCommonHeaders() returns map<string> {
-    string apiVersion = "2017-07-29";
+    string apiVersion = "2018-03-28";
     string dateString = generateAzureStorageDateString();
     map<string> headers = { "x-ms-date": dateString, "x-ms-version": apiVersion };
     return headers;
@@ -48,7 +48,12 @@ function generateAzureStorageDateString() returns string {
 
 function generateError(http:Response resp) returns error {
     xml errorXml = check resp.getXmlPayload();
-    error err = error(errorXml.Code.getTextValue(), { message: errorXml.Message.getTextValue() });
+    string message = errorXml.Message.getTextValue();
+    string authError = errorXml.AuthenticationErrorDetail.getTextValue();
+    if (authError != "") {
+        message = message + " AuthError: " + authError;
+    }
+    error err = error(errorXml.Code.getTextValue(), { message: message });
     return err;
 }
 

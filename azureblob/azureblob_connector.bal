@@ -263,7 +263,7 @@ remote function Client.deleteBlob(string container, string name) returns error? 
     }
 }
 
-# Azure Blog Service configuration.
+# Azure Blob Service configuration.
 # + accessKey - The Azure access key
 # + account   - The Azure container account name
 public type Configuration record {
