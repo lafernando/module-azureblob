@@ -177,7 +177,8 @@ remote function Client.deleteContainer(string container) returns error? {
 remote function Client.putBlob(string container, string name, byte[] data, BlobType blobType = "BLOCK",
                         string contentType = "application/octet-stream", 
                         string contentEncoding = "") returns error? {
-    http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
+    http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN, 
+                               config = { chunking: http:CHUNKING_NEVER });
 
     string verb = "PUT";
     map<string> headers = generatePutBlobHeaders(blobType);
