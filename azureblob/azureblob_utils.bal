@@ -54,7 +54,7 @@ function generateError(http:Response resp) returns error {
         message = message + " AuthError: " + authError;
     }
     error err = error(errorXml.Code.getTextValue(), { message: message });
-    return err;
+    return untaint err;
 }
 
 function populateAuthorizationHeader(string account, string accessKey, string canonicalizedResource, 

@@ -193,7 +193,7 @@ remote function Client.putBlob(string container, string name, byte[] data, BlobT
     populateAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
-    req.setBinaryPayload(data);
+    req.setBinaryPayload(untaint data);
     populateRequestHeaders(req, headers);
 
     var resp = clientEP->put("/" + untaint container + "/" + untaint name, req);
