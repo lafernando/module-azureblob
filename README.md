@@ -5,7 +5,7 @@ This connector allows to use the Azure Blob service through Ballerina. The follo
 ## Compatibility
 | Ballerina Language Version 
 | -------------------------- 
-| 0.990.0                    
+| 0.993.0                    
 
 
 The following sections provide you with information on how to use the Azure Blob Service Connector.
