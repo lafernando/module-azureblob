@@ -5,7 +5,7 @@ This connector allows to use the Azure Blob service through Ballerina. The follo
 ## Compatibility
 | Ballerina Language Version 
 | -------------------------- 
-| 0.993.0                    
+| 0.991.0                    
 
 
 The following sections provide you with information on how to use the Azure Blob Service Connector.
@@ -54,9 +54,9 @@ azureblob:Configuration config = {
 
 azureblob:Client blobClient = new(config);
 
-public function main(string... args) {
-    _ = blobClient->createContainer("ctnx1");
-    _ = blobClient->putBlob("ctnx1", "blob1", [1, 2, 3, 4, 5]);
+public function main(string... args) returns error? {
+    check blobClient->createContainer("ctnx1");
+    check blobClient->putBlob("ctnx1", "blob1", [1, 2, 3, 4, 5]);
     var result = blobClient->getBlob("ctnx1", "blob1");
     io:println(result);
 }
