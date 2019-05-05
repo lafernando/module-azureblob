@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/http;
-import wso2/azurecommons;
 
 # Object to initialize the connection with Azure Blob Service.
 #
@@ -83,19 +82,19 @@ public type Client client object {
 public remote function Client.listBlobContainers() returns ListBlobContainersResult|error {
     http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
     string verb = "GET";
-    map<string> headers = azurecommons:generateStorageCommonHeaders();
+    map<string> headers = generateStorageCommonHeaders();
     string canonicalizedResource = "/" + check http:encode(self.account, "UTF8") + "/?comp=list";
-    check azurecommons:populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
+    check populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
-    azurecommons:populateRequestHeaders(req, headers);
+    populateRequestHeaders(req, headers);
 
     var resp = clientEP->get("/?comp=list", message = req);
 
     if (resp is http:Response) {
         int statusCode = resp.statusCode;
         if (statusCode != http:OK_200) {
-            return azurecommons:generateStorageError(resp);
+            return generateStorageError(resp);
         }
         return decodeListBlobContainerXML(check resp.getXmlPayload());
     } else {
@@ -106,20 +105,20 @@ public remote function Client.listBlobContainers() returns ListBlobContainersRes
 public remote function Client.listBlobs(string container) returns ListBlobResult|error {
     http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
     string verb = "GET";
-    map<string> headers = azurecommons:generateStorageCommonHeaders();
+    map<string> headers = generateStorageCommonHeaders();
     string canonicalizedResource = "/" + check http:encode(self.account, "UTF8") + "/" + 
                                          check http:encode(container, "UTF8") + "?comp=list";
-    check azurecommons:populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
+    check populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
-    azurecommons:populateRequestHeaders(req, headers);
+    populateRequestHeaders(req, headers);
 
     var resp = clientEP->get("/" + untaint container + "?restype=container&comp=list", message = req);
 
     if (resp is http:Response) {
         int statusCode = resp.statusCode;
         if (statusCode != http:OK_200) {
-            return azurecommons:generateStorageError(resp);
+            return generateStorageError(resp);
         }
         return check decodeListBlobXML(check resp.getXmlPayload());
     } else {
@@ -130,20 +129,20 @@ public remote function Client.listBlobs(string container) returns ListBlobResult
 public remote function Client.createContainer(string container) returns error? {
     http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
     string verb = "PUT";
-    map<string> headers = azurecommons:generateStorageCommonHeaders();
+    map<string> headers = generateStorageCommonHeaders();
     string canonicalizedResource = "/" + check http:encode(self.account, "UTF8") + "/" + 
                                          check http:encode(container, "UTF8");
-    check azurecommons:populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
+    check populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
-    azurecommons:populateRequestHeaders(req, headers);
+    populateRequestHeaders(req, headers);
 
     var resp = clientEP->put("/" + untaint container + "?restype=container", req);
 
     if (resp is http:Response) {
         int statusCode = resp.statusCode;
         if (statusCode != http:CREATED_201) {
-            return azurecommons:generateStorageError(resp);
+            return generateStorageError(resp);
         }
         return ();
     } else {
@@ -154,20 +153,20 @@ public remote function Client.createContainer(string container) returns error? {
 public remote function Client.deleteContainer(string container) returns error? {
     http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
     string verb = "DELETE";
-    map<string> headers = azurecommons:generateStorageCommonHeaders();
+    map<string> headers = generateStorageCommonHeaders();
     string canonicalizedResource = "/" + check http:encode(self.account, "UTF8") + "/" + 
                                          check http:encode(container, "UTF8");
-    check azurecommons:populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
+    check populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
-    azurecommons:populateRequestHeaders(req, headers);
+    populateRequestHeaders(req, headers);
 
     var resp = clientEP->delete("/" + untaint container + "?restype=container", req);
 
     if (resp is http:Response) {
         int statusCode = resp.statusCode;
         if (statusCode != http:ACCEPTED_202) {
-            return azurecommons:generateStorageError(resp);
+            return generateStorageError(resp);
         }
         return ();
     } else {
@@ -191,18 +190,18 @@ public remote function Client.putBlob(string container, string name, byte[] data
     string canonicalizedResource = "/" + check http:encode(self.account, "UTF8") + "/" + 
                                          check http:encode(container, "UTF8") + "/" +
                                          check http:encode(name, "UTF-8");
-    check azurecommons:populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
+    check populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
     req.setBinaryPayload(untaint data);
-    azurecommons:populateRequestHeaders(req, headers);
+    populateRequestHeaders(req, headers);
 
     var resp = clientEP->put("/" + untaint container + "/" + untaint name, req);
 
     if (resp is http:Response) {
         int statusCode = resp.statusCode;
         if (statusCode != http:CREATED_201) {
-            return azurecommons:generateStorageError(resp);
+            return generateStorageError(resp);
         }
         return ();
     } else {
@@ -215,21 +214,21 @@ public remote function Client.getBlob(string container, string name, int startRa
     http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
 
     string verb = "GET";
-    map<string> headers = azurecommons:generateStorageCommonHeaders();
+    map<string> headers = generateStorageCommonHeaders();
     string canonicalizedResource = "/" + check http:encode(self.account, "UTF8") + "/" + 
                                          check http:encode(container, "UTF8") + "/" +
                                          check http:encode(name, "UTF-8");
-    check azurecommons:populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
+    check populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
-    azurecommons:populateRequestHeaders(req, headers);
+    populateRequestHeaders(req, headers);
 
     var resp = clientEP->get("/" + untaint container + "/" + untaint name, message = req);
 
     if (resp is http:Response) {
         int statusCode = resp.statusCode;
         if (statusCode != http:OK_200) {
-            return azurecommons:generateStorageError(resp);
+            return generateStorageError(resp);
         }
         string cls = resp.getHeader("Content-Length");
         BlobInfo blobInfo = { name: name, contentLength: check int.convert(cls), blobType: BLOCK_BLOB };
@@ -243,21 +242,21 @@ public remote function Client.deleteBlob(string container, string name) returns 
     http:Client clientEP = new("https://" + self.account + "." + AZURE_BLOB_SERVICE_DOMAIN);
 
     string verb = "DELETE";
-    map<string> headers = azurecommons:generateStorageCommonHeaders();
+    map<string> headers = generateStorageCommonHeaders();
     string canonicalizedResource = "/" + check http:encode(self.account, "UTF8") + "/" + 
                                          check http:encode(container, "UTF8") + "/" +
                                          check http:encode(name, "UTF-8");
-    check azurecommons:populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
+    check populateSharedKeyLiteStorageAuthorizationHeader(self.account, self.accessKey, canonicalizedResource, verb, headers);
 
     http:Request req = new;
-    azurecommons:populateRequestHeaders(req, headers);
+    populateRequestHeaders(req, headers);
 
     var resp = clientEP->delete("/" + untaint container + "/" + untaint name, req);
 
     if (resp is http:Response) {
         int statusCode = resp.statusCode;
         if (statusCode != http:ACCEPTED_202) {
-            return azurecommons:generateStorageError(resp);
+            return generateStorageError(resp);
         }
         return ();
     } else {

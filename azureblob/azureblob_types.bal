@@ -19,9 +19,9 @@
 import ballerina/io;
 
 public type BlobInfo record {
-    string name;
-    int contentLength;
-    BlobType blobType;
+    string name = "";
+    int contentLength = 0;
+    BlobType blobType = "BLOCK";
     string lastModified?;
     string contentType?;
     (int, int) range?;
@@ -40,7 +40,7 @@ public type BlobResult record {
 };
 
 public type ListBlobResult record {
-    BlobInfo[] blobs;
+    BlobInfo?[] blobs;
 };
 
 public type ListBlobContainersResult record {

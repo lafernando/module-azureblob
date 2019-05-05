@@ -26,7 +26,7 @@ Client blobClient = new(config);
 
 @test:Config
 function testCreateContainer() {
-    _ = blobClient->deleteContainer("ctnx1");
+    error? ignore = blobClient->deleteContainer("ctnx1");
     var result = blobClient->createContainer("ctnx1");
     if (result is error) {
         test:assertFail(msg = <string> result.detail().message);
@@ -84,7 +84,7 @@ function testGetBlob2() returns error? {
         if (ch is io:ReadableByteChannel) {
             (byte[],int) data = check ch.read(2);
             test:assertTrue(data[0][0] == 1);
-            _ = ch.close();
+            check ch.close();
         } else {
             test:assertFail(msg = "Expeced non-streaming data");
         }

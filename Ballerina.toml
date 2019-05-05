@@ -1,7 +1,8 @@
 [project]
 org-name = "wso2"
-version = "0.1.14"
+version = "0.1.15"
 authors = ["WSO2"]
 keywords = ["azure", "blob"]
 repository = "https://github.com/lafernando/module-azureblob"
 license = "Apache-2.0"
+

@@ -19,7 +19,6 @@
 import ballerina/crypto;
 import ballerina/encoding;
 import ballerina/time;
-import wso2/azurecommons;
 
 function generatePutBlobHeaders(BlobType blobType) returns map<string> {
     map<string> headers = { };
@@ -30,14 +29,14 @@ function generatePutBlobHeaders(BlobType blobType) returns map<string> {
     } else if (blobType == PAGE_BLOB) {
         headers["x-ms-blob-type"] = "PageBlob";
     }
-    foreach var (k, v) in azurecommons:generateStorageCommonHeaders() {
+    foreach var (k, v) in generateStorageCommonHeaders() {
         headers[k] = v;
     }
     return headers;
 }
 
 function decodeListBlobXML(xml payload) returns ListBlobResult|error {
-    BlobInfo[] blobs = [];
+    BlobInfo?[] blobs = [];
     int index = 0;
     foreach var item in payload.Blobs.Blob {
         if (item is xml) {
